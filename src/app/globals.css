@@ -13,6 +13,9 @@
 
 html {
   scroll-behavior: smooth;
+  /* Thanh cuộn mảnh tông tối để không tạo dải trắng cạnh phần hero nền tối */
+  scrollbar-width: thin;
+  scrollbar-color: #8a847b #141312;
 }
 
 body {
