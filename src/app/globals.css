@@ -1,26 +1,129 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-ink: #141312;
+  --color-paper: #faf8f5;
+  --color-beige: #ece6dc;
+  --color-stone: #8a847b;
+  --font-sans: var(--font-sans-vn);
+  --font-serif: var(--font-serif-vn);
+  --font-display: var(--font-display-vn);
+  --font-script: var(--font-script-vn);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans), sans-serif;
+  font-weight: 300;
 }
+
+/* Hiện dần khi cuộn tới */
+/* Khoảng dịch chuyển nhỏ hơn trên điện thoại cho mượt, lớn hơn trên màn hình rộng */
+:root { --rv-y: 24px; --rv-x: 28px; }
+@media (min-width: 768px) { :root { --rv-y: 44px; --rv-x: 60px; } }
+
+.reveal {
+  opacity: 0;
+  /* mặc định: lật 3D nhẹ từ dưới lên */
+  transform: perspective(1200px) rotateX(12deg) translateY(var(--rv-y)) scale(0.97);
+  transform-origin: 50% 100%;
+  transition: opacity 0.9s cubic-bezier(0.2, 0.7, 0.2, 1), transform 1s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.reveal-left { transform: translateX(calc(var(--rv-x) * -1)); }
+.reveal-right { transform: translateX(var(--rv-x)); }
+.reveal-zoom { transform: scale(0.9); }
+.reveal.flip,
+.reveal-flip {
+  transform: perspective(1000px) rotateX(30deg) translateY(var(--rv-y));
+  transform-origin: 50% 100%;
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* Ảnh trôi nhẹ theo cuộn (chỉ bật trên máy có chuột, màn hình rộng — xem PageFx) */
+[data-parallax] { will-change: transform; }
+
+.tilt {
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.25s ease-out;
+  will-change: transform;
+}
+.tilt::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s;
+  background: radial-gradient(circle at var(--gx, 50%) var(--gy, 50%), rgb(255 255 255 / 0.35), transparent 55%);
+}
+.tilt:hover::after {
+  opacity: 1;
+}
+
+/* Chữ chạy ngang */
+@keyframes marquee {
+  to { transform: translateX(-50%); }
+}
+.marquee {
+  animation: marquee 30s linear infinite;
+}
+
+@keyframes hero-zoom {
+  from { transform: scale(1.08); }
+  to { transform: scale(1); }
+}
+.hero-zoom {
+  animation: hero-zoom 2.4s ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1; transform: none; transition: none; }
+  .hero-zoom, .marquee { animation: none; }
+  .tilt { transform: none !important; }
+  html { scroll-behavior: auto; }
+}
+
+/* Hero nổi chìm: chữ trồi lên, ảnh hiện dần */
+@keyframes word-in {
+  from { transform: translateY(40%); opacity: 0; letter-spacing: 0.1em; }
+  to { transform: none; opacity: 1; }
+}
+@keyframes hero-in {
+  from { transform: scale(1.12); opacity: 0; }
+  to { transform: none; opacity: 1; }
+}
+.word-in { animation: word-in 1.6s 0.3s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+.hero-in { animation: hero-in 1.8s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+@media (prefers-reduced-motion: reduce) {
+  .word-in, .hero-in { animation: none; }
+}
+
+/* Sticker trôi nhẹ + huy hiệu xoay */
+@keyframes bob {
+  0%, 100% { translate: 0 0; }
+  50% { translate: 0 -8px; }
+}
+.sticker { animation: bob 4s ease-in-out infinite; }
+@keyframes spin { to { rotate: 360deg; } }
+.spin-slow { animation: spin 18s linear infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .sticker, .spin-slow { animation: none; }
+}
+
+@keyframes slide-progress {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+.slide-progress { animation: slide-progress linear both; }
+
+@keyframes blink { 50% { opacity: 0.15; } }
+.blink { animation: blink 1.2s steps(2, jump-none) infinite; }
